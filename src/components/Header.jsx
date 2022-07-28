@@ -10,8 +10,8 @@ const Header = () => {
   const firebaseAuth = getAuth(app)
   const provider = new GoogleAuthProvider();
   const login = async () => {
-    const response = await signInWithPopup(firebaseAuth, provider);
-    console.log(response)
+    const {user:{refreshToken, providerData}} = await signInWithPopup(firebaseAuth, provider);
+    // console.log(response)
   };
   return (
     <header className="w-screen fixed z-50 p-6 px-16">
