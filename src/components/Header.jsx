@@ -6,12 +6,23 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { app } from "../firebase.config";
+import { useStateValue } from "../context/StateProvider";
+import { type } from "@testing-library/user-event/dist/type";
+import { actionType } from "../context/reducer";
 const Header = () => {
   const firebaseAuth = getAuth(app)
   const provider = new GoogleAuthProvider();
+
+  const [{user}, dispatch] = useStateValue()
+
   const login = async () => {
     const {user:{refreshToken, providerData}} = await signInWithPopup(firebaseAuth, provider);
     // console.log(response)
+    dispatch({
+      type: actionType.SET_USER,
+      user: providerData[0]
+    });
+    localStorage.setItem('user', JSON.stringify(providerData[0]))
   };
   return (
     <header className="w-screen fixed z-50 p-6 px-16">
@@ -45,10 +56,10 @@ const Header = () => {
           <div className="relative">
             <motion.img
               whileTap={{ scale: 0.6 }}
-              src={User}
+              src={user ? user.photoURL : User}
               alt=""
               onClick={login}
-              className="w-10 min-w-[40px] h-10 min-h-[40px] shadow-2xl cursor-pointer"
+              className="w-10 min-w-[40px] h-10 min-h-[40px] shadow-2xl cursor-pointer rounded-full"
             />
           </div>
         </div>
