@@ -9,9 +9,15 @@ import {
 } from "react-icons/md";
 import { categories } from "../utils/data";
 import { Loader } from "./index";
-import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
 import { storage } from "../firebase.config";
 import { upload } from "@testing-library/user-event/dist/upload";
+import { saveItem } from "../utils/firebaseFunction";
 
 const CreateContainer = () => {
   const [title, setTitle] = useState("");
@@ -39,7 +45,7 @@ const CreateContainer = () => {
       (error) => {
         console.log(error);
         setFileds(true);
-        setMsg("Terjadi keslahan ketika mengunggah : Mohon Ulangi");
+        setMsg("Terjadi keslahan ketika mengunggah gambar: Mohon Ulangi");
         setAlertStatus("danger");
         setTimeout(() => {
           setFileds(false);
@@ -51,8 +57,8 @@ const CreateContainer = () => {
           setImg(downloadURL);
           setIsLoading(false);
           setFileds(true);
-          setMsg('Berhasil menggunggah');
-          setAlertStatus('success');
+          setMsg("Berhasil menggunggah gambar");
+          setAlertStatus("success");
           setTimeout(() => {
             setFileds(false);
           }, 4000);
@@ -67,14 +73,62 @@ const CreateContainer = () => {
       setImg(null);
       setIsLoading(false);
       setFileds(true);
-      setMsg('Gambar Terhapus');
-      setAlertStatus('success');
+      setMsg("Gambar Terhapus");
+      setAlertStatus("success");
       setTimeout(() => {
         setFileds(false);
       }, 4000);
-    })
+    });
   };
-  const save = () => {};
+  const save = () => {
+    setIsLoading(true);
+    try {
+      if (!title || !calories || !img || !price || !category) {
+        setFileds(true);
+        setMsg("Tolong isi kolom dengan lengkap");
+        setAlertStatus("danger");
+        setTimeout(() => {
+          setFileds(false);
+          setIsLoading(false);
+        }, 4000);
+      } else {
+        const data = {
+          id: `${Date.now()}`,
+          title: title,
+          category: category,
+          price: price,
+          qty: 1,
+          calories: calories,
+          imageURL: img
+        };
+        saveItem(data);
+        setIsLoading(false);
+        setFileds(true);
+        setMsg("Berhasil menggunggah item");
+        setAlertStatus("success");
+        clear()
+        setTimeout(() => {
+          setFileds(false);
+        }, 4000);
+      }
+    } catch (error) {
+      setFileds(true);
+      setMsg("Terjadi keslahan ketika mengunggah : Mohon Ulangi");
+      setAlertStatus("danger");
+      setTimeout(() => {
+        setFileds(false);
+        setIsLoading(false);
+      }, 4000);
+    }
+  };
+
+  const clear = () => {
+    setTitle("");
+    setImg(null);
+    setCalories("");
+    setPrice("");
+    setCategory(null);
+  };
 
   return (
     <div className="w-full min-h-screen h-auto flex items-center justify-center">
@@ -213,7 +267,7 @@ const CreateContainer = () => {
 
         <div className="flex items-center w-full">
           <button
-            type="button"
+            type="submit"
             className="ml-0 md:ml-auto w-full md:w-auto border-none outline-none
              bg-emerald-500 px-12 py-2 rounded-lg text-lg text-white font-semibold"
             onClick={save}
