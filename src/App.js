@@ -5,9 +5,10 @@ import { Route, Routes } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 
 const App = () => {
+
   return (
 
-    <AnimatePresence exitBeforeEnter>
+    <AnimatePresence exitBeforeEnter >
             <div className="w-screen h-auto flex flex-col bg-primary">
         <Header/>
 

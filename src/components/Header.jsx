@@ -41,6 +41,10 @@ const Header = () => {
       user: null,
     });
   };
+
+  const close = () => {
+    setIsMenu(false)
+  }
   return (
     <header className="w-screen fixed z-50 p-3 px-4 md:p-4 md:px-16 bg-primary">
       <div className="hidden md:flex w-full h-full">
@@ -55,9 +59,11 @@ const Header = () => {
             exit={{ opacity: 0, x: 200 }}
             className="flex  items-center gap-8 "
           >
+            <Link to={"/"}>
             <li className="text-base text-textColor hover:text-headingColor duration-100 transition-all ease-in-out cursor-pointer">
               Home
             </li>
+            </Link>
             <li className="text-base text-textColor hover:text-headingColor duration-100 transition-all ease-in-out cursor-pointer">
               Menu
             </li>
@@ -94,7 +100,7 @@ const Header = () => {
               >
                 {user && user.email === "aryabudiartana69@gmail.com" && (
                   <Link to={"/createItem"}>
-                    <p className=" px-4 py-2 flex items-center gap-3 cursor-pointer hover:bg-slate-200 transition-all duration-100 ease-in-out text-textColor text-base">
+                    <p className=" px-4 py-2 flex items-center gap-3 cursor-pointer hover:bg-slate-200 transition-all duration-100 ease-in-out text-textColor text-base" onClick={close}>
                       New Item <MdAdd />
                     </p>
                   </Link>
@@ -144,7 +150,7 @@ const Header = () => {
             >
               {user && user.email === "aryabudiartana69@gmail.com" && (
                 <Link to={"/createItem"}>
-                  <p className=" px-4 py-2 flex items-center gap-3 cursor-pointer hover:bg-slate-200 transition-all duration-100 ease-in-out text-textColor text-base">
+                  <p className=" px-4 py-2 flex items-center gap-3 cursor-pointer hover:bg-slate-200 transition-all duration-100 ease-in-out text-textColor text-base" onClick={close}>
                     New Item <MdAdd />
                   </p>
                 </Link>
@@ -164,16 +170,18 @@ const Header = () => {
                 </li>
               </ul> */}
 
-              <p className=" px-4 py-2 flex items-center gap-3 cursor-pointer hover:bg-slate-200 transition-all duration-100 ease-in-out text-textColor text-base">
+              <Link to={"/"}>
+              <p className=" px-4 py-2 flex items-center gap-3 cursor-pointer hover:bg-slate-200 transition-all duration-100 ease-in-out text-textColor text-base" onClick={close}>
                 Home
               </p>
-              <p className=" px-4 py-2 flex items-center gap-3 cursor-pointer hover:bg-slate-200 transition-all duration-100 ease-in-out text-textColor text-base">
+              </Link>
+              <p className=" px-4 py-2 flex items-center gap-3 cursor-pointer hover:bg-slate-200 transition-all duration-100 ease-in-out text-textColor text-base" onClick={close}>
                 Menu
               </p>
-              <p className=" px-4 py-2 flex items-center gap-3 cursor-pointer hover:bg-slate-200 transition-all duration-100 ease-in-out text-textColor text-base">
+              <p className=" px-4 py-2 flex items-center gap-3 cursor-pointer hover:bg-slate-200 transition-all duration-100 ease-in-out text-textColor text-base" onClick={close}>
                 About Us
               </p>
-              <p className=" px-4 py-2 flex items-center gap-3 cursor-pointer hover:bg-slate-200 transition-all duration-100 ease-in-out text-textColor text-base">
+              <p className=" px-4 py-2 flex items-center gap-3 cursor-pointer hover:bg-slate-200 transition-all duration-100 ease-in-out text-textColor text-base" onClick={close}>
                 Services
               </p>
 
