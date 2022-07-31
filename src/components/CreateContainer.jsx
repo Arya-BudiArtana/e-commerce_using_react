@@ -5,10 +5,13 @@ import {
   MdCloudUpload,
   MdDelete,
   MdFoodBank,
-  MdAttachMoney
+  MdAttachMoney,
 } from "react-icons/md";
 import { categories } from "../utils/data";
 import { Loader } from "./index";
+import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { storage } from "../firebase.config";
+import { upload } from "@testing-library/user-event/dist/upload";
 
 const CreateContainer = () => {
   const [title, setTitle] = useState("");
@@ -21,8 +24,56 @@ const CreateContainer = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [alertStatus, setAlertStatus] = useState("danger");
 
-  const uploadImage = () => {};
-  const deleteImg = () => {};
+  const uploadImage = (e) => {
+    setIsLoading(true);
+    const imgFile = e.target.files[0];
+    const storageRef = ref(storage, `Images/${Date.now()}-${imgFile.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, imgFile);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const uploadProgress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      },
+      (error) => {
+        console.log(error);
+        setFileds(true);
+        setMsg("Terjadi keslahan ketika mengunggah : Mohon Ulangi");
+        setAlertStatus("danger");
+        setTimeout(() => {
+          setFileds(false);
+          setIsLoading(false);
+        }, 4000);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setImg(downloadURL);
+          setIsLoading(false);
+          setFileds(true);
+          setMsg('Berhasil menggunggah');
+          setAlertStatus('success');
+          setTimeout(() => {
+            setFileds(false);
+          }, 4000);
+        });
+      }
+    );
+  };
+  const deleteImg = () => {
+    setIsLoading(true);
+    const deleteRef = ref(storage, img);
+    deleteObject(deleteRef).then(() => {
+      setImg(null);
+      setIsLoading(false);
+      setFileds(true);
+      setMsg('Gambar Terhapus');
+      setAlertStatus('success');
+      setTimeout(() => {
+        setFileds(false);
+      }, 4000);
+    })
+  };
   const save = () => {};
 
   return (
@@ -133,38 +184,43 @@ const CreateContainer = () => {
               )}
             </>
           )}
-
         </div>
-          <div className="w-full flex flex-col md:flex-row items-center gap-3">
-            <div className="w-full py-2 border-b border-gray-300 flex items-center gap-2">
-              <MdFoodBank className="text-2xl text-gray-700"></MdFoodBank>
-              <input
-                type="text"
-                required
-                placeholder="Kalori..."
-                value={calories}
-                onChange={(e) => setCalories(e.target.value)}
-                className="w-full h-full text-lg bg-transparent outline-none border-none placeholder:text-gray-400 text-textColor"
-              />
-            </div>
-
-            <div className="w-full py-2 border-b border-gray-300 flex items-center gap-2">
-              <MdAttachMoney className="text-2xl text-gray-700"></MdAttachMoney>
-              <input
-                type="number"
-                required
-                placeholder="Harga..."
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                className="w-full h-full text-lg bg-transparent outline-none border-none placeholder:text-gray-400 text-textColor"
-              />
-            </div>
+        <div className="w-full flex flex-col md:flex-row items-center gap-3">
+          <div className="w-full py-2 border-b border-gray-300 flex items-center gap-2">
+            <MdFoodBank className="text-2xl text-gray-700"></MdFoodBank>
+            <input
+              type="text"
+              required
+              placeholder="Kalori..."
+              value={calories}
+              onChange={(e) => setCalories(e.target.value)}
+              className="w-full h-full text-lg bg-transparent outline-none border-none placeholder:text-gray-400 text-textColor"
+            />
           </div>
 
-          <div className="flex items-center w-full">
-            <button type="button" className="ml-0 md:ml-auto w-full md:w-auto border-none outline-none
-             bg-emerald-500 px-12 py-2 rounded-lg text-lg text-white font-semibold" onClick={save}>Simpan</button>
+          <div className="w-full py-2 border-b border-gray-300 flex items-center gap-2">
+            <MdAttachMoney className="text-2xl text-gray-700"></MdAttachMoney>
+            <input
+              type="number"
+              required
+              placeholder="Harga..."
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              className="w-full h-full text-lg bg-transparent outline-none border-none placeholder:text-gray-400 text-textColor"
+            />
           </div>
+        </div>
+
+        <div className="flex items-center w-full">
+          <button
+            type="button"
+            className="ml-0 md:ml-auto w-full md:w-auto border-none outline-none
+             bg-emerald-500 px-12 py-2 rounded-lg text-lg text-white font-semibold"
+            onClick={save}
+          >
+            Simpan
+          </button>
+        </div>
       </div>
     </div>
   );
