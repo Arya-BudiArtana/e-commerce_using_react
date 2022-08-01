@@ -18,6 +18,9 @@ import {
 import { storage } from "../firebase.config";
 import { upload } from "@testing-library/user-event/dist/upload";
 import { saveItem } from "../utils/firebaseFunction";
+import { useStateValue } from "../context/StateProvider";
+import { getItems } from "../utils/firebaseFunction";
+import { actionType } from "../context/reducer";
 
 const CreateContainer = () => {
   const [title, setTitle] = useState("");
@@ -29,6 +32,7 @@ const CreateContainer = () => {
   const [msg, setMsg] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [alertStatus, setAlertStatus] = useState("danger");
+  const [{}, dispatch] = useStateValue();
 
   const uploadImage = (e) => {
     setIsLoading(true);
@@ -120,6 +124,8 @@ const CreateContainer = () => {
         setIsLoading(false);
       }, 4000);
     }
+
+    fetchData()
   };
 
   const clear = () => {
@@ -128,6 +134,15 @@ const CreateContainer = () => {
     setCalories("");
     setPrice("");
     setCategory(null);
+  };
+
+  const fetchData = async () => {
+    await getItems().then((data) => {
+      dispatch({
+        type: actionType.SET_FOOD_ITEMS,
+        foodItems: data,
+      });
+    });
   };
 
   return (
